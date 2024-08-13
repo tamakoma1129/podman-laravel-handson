@@ -2,4 +2,6 @@ FROM docker.io/httpd:2.4.62
 
 RUN usermod -u 3900 www-data
 
+RUN echo "Include conf/extra/laravel.conf" >> /usr/local/apache2/conf/httpd.conf
+
 CMD ["httpd-foreground"]
