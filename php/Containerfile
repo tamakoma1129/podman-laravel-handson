@@ -1,0 +1,31 @@
+FROM docker.io/php:8.1-fpm
+
+# Composerでroot実行を許可する環境変数
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_HOME=/composer
+
+COPY --from=docker.io/composer:2.6.6 /usr/bin/composer /usr/bin/composer
+
+# git : Laravelをgit pullする為
+# unzip : Composerに必要。
+# libzip-dev : zipに必要。
+# libicu-dev : intlに必要。
+RUN apt-get update \
+  && apt-get -y install --no-install-recommends \
+  git \
+  unzip \
+  libzip-dev \
+  libicu-dev \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# zip : Laravelのプロジェクト作成に必要。
+# pod_mysql : MySQLに必要。
+# opcache : 高速化
+RUN docker-php-ext-install zip pdo_mysql opcache
+
+# docker-php-ext-installはphp.iniを上書きするわけでは無いのでここでおｋ
+COPY ./php.ini /usr/local/etc/php/php.ini
+
+# 権限問題的にwww-data=UID3900として実行。主にlaravel/storage/logs/laravel.logをPHP-FPMが弄るために
+USER 3900
