@@ -1,0 +1,73 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-4.9.4-rhel
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2024-08-13T23:45:06Z"
+  labels:
+    app: podman-laravel-handson-pod
+  name: podman-laravel-handson-pod
+spec:
+  containers:
+  - args:
+    - php-fpm
+    image: localhost/php-fpm-8.1-image:latest
+    name: php-fpm-8.1-container
+    ports:
+    - containerPort: 80
+      hostPort: 8080
+    securityContext:
+      runAsNonRoot: true
+    volumeMounts:
+    - mountPath: /laravel
+      name: home-tamakoma-podman-laravel-handson-laravel-host-0
+    workingDir: /laravel
+  - image: localhost/apache-2.4-image:latest
+    name: apache-2.4-container
+    volumeMounts:
+    - mountPath: /laravel
+      name: home-tamakoma-podman-laravel-handson-laravel-host-0
+    - mountPath: /usr/local/apache2/conf/extra/laravel.conf
+      name: home-tamakoma-podman-laravel-handson-apache-laravel.conf-host-1
+    workingDir: /laravel
+  - args:
+    - mysqld
+    image: localhost/mysql-8.4-image:latest
+    name: mysql-8.4-container
+    volumeMounts:
+    - mountPath: /etc/mysql/conf.d/my.cnf
+      name: home-tamakoma-podman-laravel-handson-mysql-my.cnf-host-0
+    - mountPath: /var/lib/mysql
+      name: home-tamakoma-podman-laravel-handson-mysql-db-store-host-1
+  hostUsers: false
+  initContainers:
+  - args:
+    - sh
+    - -c
+    - npm install && npm run build
+    image: localhost/vite-20.16-image:latest
+    name: vite-20.16-container
+    resources: {}
+    volumeMounts:
+    - mountPath: /laravel
+      name: home-tamakoma-podman-laravel-handson-laravel-host-0
+    workingDir: /laravel
+  volumes:
+  - hostPath:
+      path: /home/tamakoma/podman-laravel-handson/apache/laravel.conf
+      type: File
+    name: home-tamakoma-podman-laravel-handson-apache-laravel.conf-host-1
+  - hostPath:
+      path: /home/tamakoma/podman-laravel-handson/mysql/my.cnf
+      type: File
+    name: home-tamakoma-podman-laravel-handson-mysql-my.cnf-host-0
+  - hostPath:
+      path: /home/tamakoma/podman-laravel-handson/mysql/db-store
+      type: Directory
+    name: home-tamakoma-podman-laravel-handson-mysql-db-store-host-1
+  - hostPath:
+      path: /home/tamakoma/podman-laravel-handson/laravel
+      type: Directory
+    name: home-tamakoma-podman-laravel-handson-laravel-host-0
