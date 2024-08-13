@@ -1,0 +1,1 @@
+FROM docker.io/node:20.16.0-alpine
