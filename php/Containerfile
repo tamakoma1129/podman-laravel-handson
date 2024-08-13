@@ -21,8 +21,7 @@ RUN apt-get update \
 
 # zip : Laravelのプロジェクト作成に必要。
 # pod_mysql : MySQLに必要。
-# opcache : 高速化
-RUN docker-php-ext-install zip pdo_mysql opcache
+RUN docker-php-ext-install zip pdo_mysql
 
 # docker-php-ext-installはphp.iniを上書きするわけでは無いのでここでおｋ
 COPY ./php.ini /usr/local/etc/php/php.ini
