@@ -9,11 +9,15 @@ metadata:
   labels:
     app: podman-laravel-handson-pod
   name: podman-laravel-handson-pod
+  annotations:
+        # initコンテナをalwaysモードに
+        io.podman.annotations.init.container.type: "always"
 spec:
   containers:
   - args:
     - php-fpm
-    image: localhost/php-fpm-8.1-image:latest
+    # imageは指定せず、ビルドして作成する
+    image: php
     name: php-fpm-8.1-container
     ports:
     - containerPort: 80
@@ -24,7 +28,8 @@ spec:
     - mountPath: /laravel
       name: home-tamakoma-podman-laravel-handson-laravel-host-0
     workingDir: /laravel
-  - image: localhost/apache-2.4-image:latest
+    # imageは指定せず、ビルドして作成する
+  - image: apache
     name: apache-2.4-container
     volumeMounts:
     - mountPath: /laravel
@@ -34,7 +39,8 @@ spec:
     workingDir: /laravel
   - args:
     - mysqld
-    image: localhost/mysql-8.4-image:latest
+    # imageは指定せず、ビルドして作成する
+    image: mysql
     name: mysql-8.4-container
     volumeMounts:
     - mountPath: /etc/mysql/conf.d/my.cnf
@@ -47,7 +53,8 @@ spec:
     - sh
     - -c
     - npm install && npm run build
-    image: localhost/vite-20.16-image:latest
+    # imageは指定せず、ビルドして作成する
+    image: vite
     name: vite-20.16-container
     resources: {}
     volumeMounts:
