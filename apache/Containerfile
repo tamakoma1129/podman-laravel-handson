@@ -1,0 +1,5 @@
+FROM docker.io/httpd:2.4.62
+
+RUN usermod -u 3900 www-data
+
+CMD ["httpd-foreground"]
